@@ -39,7 +39,7 @@ namespace battleShips
 
         }
 
-        static void placeShips(char[,] board, List<Ship> ships)
+        private void placeShips(char[,] board, List<Ship> ships)
         {
             var shipSizes = new Dictionary<string, int>
             {
@@ -48,13 +48,82 @@ namespace battleShips
                 { "Πολεμικό", 3},
                 { "Υποβρύχιο", 2 }
             };
-            foreach (var ships in shipSizes)
+            foreach (var ship in shipSizes)
             {
-
+                bool placed = false;
+                while (!placed)
+                {
+                    int row = random.Next(BoardSize);
+                    int col = random.Next(BoardSize);
+                    bool vertical = random.Next(2) == 0;
+                    if(canPlaceShip(board, row,col, ship.Value, vertical))
+                    {
+                        placeShips(board, ships, ship.Key, row, col, ship.Value, vertical);
+                        placed = true;
+                    }
+                }
             }
-            
+        }
+        private bool canPlaceShip(char[,] board, int row, int col, int size, bool vertical)
+        {
+            if (vertical)
+            {
+                if (row + size > BoardSize) return false;
+                for (int i = 0; i < BoardSize; i++)
+                {
+                    if (board[row + i, col] != '~') return false;
+                }
+            }
+            else
+            {
+                if(col+size>BoardSize)return false;
+                for (int i = 0; i < BoardSize; i++)
+                {
+                    if (board[row, col + i] != '~') return false;      
+                }
+            }
+            return true;
         }
 
+        static void placeShips(char[,] board, List<Ship> ships, string name, int row, int col, int size, bool vertical)
+        {
+            var ship = new Ship{ name = name, size = size};
+            for(int i=0; i < size; i++)
+            {
+                if (vertical)
+                {
+                    board[row+i, col] = 'S';
+                    ship.coordinates.Add((row + i, col));
+                }
+                else
+                {
+                    board[row, col + i] = 'S';
+                    ship.coordinates.Add((row, col + i));
+                }
+            }
+            ships.Add(ship);
+        }
+
+        private void showBoards()//Πρώτα κτίζω τον κώδικα βάση της λογικής και μετά θα εφαρμόσω το UI βάση του κώδικα
+        {
+            Console.WriteLine("Πίνακας Παίκτη: ");
+            displayBoard(PlayerBoard);
+            Console.WriteLine("\n Πίνακας Αντιπάλου");
+            displayBoard(ComputerBoard);
+        }
+
+        private void DisplayBoard(char[,] board)
+        {
+            Console.Write("  ");
+            for (int i = 1; i < BoardSize; i++) Console.Write($"{i}");
+            Console.WriteLine();
+
+            for(int i =0; i < BoardSize; i++)
+            {
+                Console.Write($"{board[i, j]} ");
+            }
+
+}
         private void restartGame(bool playAgain)
         {
             create.initializeTables(BoardSize, PlayerBoard, ComputerBoard,ComputerHiddenBoard);
