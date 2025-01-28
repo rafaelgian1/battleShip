@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,27 @@ namespace battleShips
     public class shipsPlacement
     {
         private const int gridSize = 10;
-        public string[,] playerGrid = new string[gridSize, gridSize]; // Player grid
-        public string[,] enemyGrid = new string[gridSize, gridSize]; // Enemy grid
-        public selectAttackAreas attackManager;
+        public string[,] playerGrid { get; private set; }
+        public string[,] enemyGrid { get; private set; }
+        public selectAttackAreas attackManager { get; private set; }
 
-        public shipsPlacement()
+        private Dictionary<string, shipInformation> ships;
+        private Random random;
+
+        public shipsPlacement(int gridSize)
         {
+            playerGrid = new string[gridSize, gridSize];
+            enemyGrid = new string[gridSize, gridSize];
             attackManager = new selectAttackAreas(enemyGrid);
+
+            random = new Random();
+            ships = new Dictionary<string, shipInformation>
+            {
+                { "Αεροπλανοφόρο", new shipInformation { shipLength = 5, shipImage = Properties.Resources.aircraftcarrier } },
+                { "Αντιτορπιλικό", new shipInformation { shipLength = 4, shipImage = Properties.Resources.destroyer } },
+                { "Πολεμικό", new shipInformation { shipLength = 3, shipImage = Properties.Resources.battleship } },
+                { "Υποβρύχιο", new shipInformation { shipLength = 2, shipImage = Properties.Resources.submarine } }
+            };
         }
 
         public class shipInformation
@@ -26,16 +41,6 @@ namespace battleShips
             public int shipLength { get; set; }
             public Image shipImage { get; set; }
         }
-
-        private Dictionary<string, shipInformation> ships = new Dictionary<string, shipInformation>
-        {
-            {"Αεροπλανοφόρο", new shipInformation{ shipLength = 5, shipImage = Properties.Resources.aircraftcarrier }},
-            {"Αντιτορπιλικό", new shipInformation{ shipLength = 4, shipImage = Properties.Resources.destroyer }},
-            {"Πολεμικό", new shipInformation{ shipLength = 3, shipImage = Properties.Resources.battleship }},
-            {"Υποβρύχιο", new shipInformation{ shipLength = 2, shipImage = Properties.Resources.submarine }},
-        };
-
-        Random random = new Random();
 
         public void createGrid()
         {
@@ -53,12 +58,12 @@ namespace battleShips
             while (!placed)
             {
                 int row = random.Next(gridSize);
-                int column = random.Next(gridSize);
+                int col = random.Next(gridSize);
                 bool horizontal = random.Next(2) == 0;
 
-                if (canPlaceShip(grid, row, column, shipSize, horizontal))
+                if (canPlaceShip(grid, row, col, shipSize, horizontal))
                 {
-                    placeShip(grid, row, column, shipSize, horizontal, shipName);
+                    placeShip(grid, row, col, shipSize, horizontal, shipName);
                     placed = true;
                 }
             }
@@ -100,9 +105,7 @@ namespace battleShips
             }
         }
 
- 
-
-        public void renderGrid(TableLayoutPanel tableLayout, string[,] grid)
+        public void renderGrid(TableLayoutPanel tableLayout, string[,] grid, bool revealShips = false)
         {
             tableLayout.Controls.Clear();
             tableLayout.RowCount = gridSize;
@@ -116,19 +119,26 @@ namespace battleShips
                     {
                         Dock = DockStyle.Fill,
                         BackColor = Color.LightGray,
-                        Tag = $"{(char)('Α' + row)}{col + 1}", // Αναπαράσταση θέσης
+                        Tag = $"{(char)('Α' + row)}{col + 1}",
+                        Text = $"{(char)('Α' + row)}{col + 1}",
+                        BackgroundImageLayout = ImageLayout.Stretch
                     };
 
+                    if (revealShips && !string.IsNullOrEmpty(grid[row, col]) && ships.ContainsKey(grid[row,col]))
+                    {
+                        button.BackgroundImage = ships[grid[row, col]].shipImage;
+                    }
                     button.Click += (sender, e) => { attackManager.selectAttackPosition(button); };
 
                     tableLayout.Controls.Add(button, col, row);
                 }
-                }
             }
+        }
         public void revealShips(Button clickedButton)
         {
             attackManager.fire(clickedButton);
         }
-        }
     }
+}
+
 

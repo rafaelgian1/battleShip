@@ -11,7 +11,12 @@ namespace battleShips
 
     internal class gridTables
     {
+        private selectAttackAreas attackManager;
 
+        //public gridTables(selectAttackAreas attackManager)
+        //{
+        //    this.attackManager = attackManager;
+        //}
 
         public void getGrids(TableLayoutPanel playerGrid, TableLayoutPanel enemyGrid, int gridSize)
         {
@@ -93,10 +98,7 @@ namespace battleShips
             Button clickedButton = sender as Button;
             if (clickedButton != null)
             {
-                var attackManager = new selectAttackAreas();  // Create the attack manager here
-                bool hit = attackManager.select(clickedButton);
-
-                clickedButton.BackColor = hit ? Color.Red : Color.Black;
+                attackManager.fire(clickedButton);
                 clickedButton.Enabled = false;
             }
         }
