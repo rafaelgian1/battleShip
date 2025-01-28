@@ -15,22 +15,16 @@ namespace battleShips
     public partial class NavalBattles : Form
     {
         public static int BoardSize = 10; // Μέγεθος πίνακα 10x10
-        
-        
-        int PlayerWins = 0;
-        int ComputerWins = 0;
-        gridTables tables = new gridTables();
+    
         int gridSize = 10;
         shipsPlacement ships = new shipsPlacement();
-
 
 
         public NavalBattles()
         {
 
             InitializeComponent();
-            
-            tables.getGrids(playerTableLayoutPanel, enemyTableLayoutPanel, gridSize);
+           
         }
         
 
@@ -38,7 +32,20 @@ namespace battleShips
         {
             ships.createGrid();
             ships.renderGrid(playerTableLayoutPanel, ships.playerGrid);
-            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid); // Εχθρικός πίνακας αρχικά κενός
+        
+            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid); //Εχθρικός πίνακας αρχικά κενός,πρωτα επιλεγει
+           // ο χρήστης 5 τοποθεσίες που θα επιτεθεί και μετά
+           // γίνονται ωρατές οι τοποθεσίες που βρίσκονται τα πλόια. 
+        }
+
+        private void attackToOpponent_Click(object sender, EventArgs e)
+        {     foreach (Control control in enemyTableLayoutPanel.Controls)
+                {
+                    if (control is Button button && ships.attackManager.IsShipHit(button.Tag.ToString()))
+                    {
+                        ships.revealShips(button);
+                    }
+                }
         }
     }
 }

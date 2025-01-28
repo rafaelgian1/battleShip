@@ -12,23 +12,29 @@ namespace battleShips
     public class shipsPlacement
     {
         private const int gridSize = 10;
+        public string[,] playerGrid = new string[gridSize, gridSize]; // Player grid
+        public string[,] enemyGrid = new string[gridSize, gridSize]; // Enemy grid
+        public selectAttackAreas attackManager;
 
-        public string[,] playerGrid = new string[gridSize, gridSize]; // Πίνακας παίκτη
-        public string[,] enemyGrid = new string[gridSize, gridSize]; // Πίνακας αντιπάλου
+        public shipsPlacement()
+        {
+            attackManager = new selectAttackAreas(enemyGrid);
+        }
 
         public class shipInformation
         {
             public int shipLength { get; set; }
             public Image shipImage { get; set; }
-
         }
+
         private Dictionary<string, shipInformation> ships = new Dictionary<string, shipInformation>
         {
-            {"Αεροπλανοφόρο", new shipInformation{shipLength = 5, shipImage=Properties.Resources.aircraftcarrier } },
-            {"Αντιτορπιλικό", new shipInformation{shipLength = 4, shipImage=Properties.Resources.destroyer } },
-            {"Πολεμικό", new shipInformation{shipLength=3, shipImage=Properties.Resources.battleship } },
-            {"Υποβρύχιο", new shipInformation{shipLength=2, shipImage = Properties.Resources.submarine } },
+            {"Αεροπλανοφόρο", new shipInformation{ shipLength = 5, shipImage = Properties.Resources.aircraftcarrier }},
+            {"Αντιτορπιλικό", new shipInformation{ shipLength = 4, shipImage = Properties.Resources.destroyer }},
+            {"Πολεμικό", new shipInformation{ shipLength = 3, shipImage = Properties.Resources.battleship }},
+            {"Υποβρύχιο", new shipInformation{ shipLength = 2, shipImage = Properties.Resources.submarine }},
         };
+
         Random random = new Random();
 
         public void createGrid()
@@ -36,38 +42,23 @@ namespace battleShips
             foreach (var ship in ships)
             {
                 placeShipRandomly(playerGrid, ship.Key, ship.Value.shipLength);
-                placeShipRandomly(enemyGrid, ship.Key, ship.Value.shipLength); /*Για να έχουν διαφορετικό ship key όταν καλόυντε οι συναρτήσεις
-                επειδή στην περίπτωση που καλείται μέσω της ίδιας μεθόδου τα πλόια τοποθετούνται στις ίδιες τοποθεσίες και στους δύο πίνακες.*/
-
+                placeShipRandomly(enemyGrid, ship.Key, ship.Value.shipLength);
             }
         }
 
-        private void placeShipRandomly(string[,] tableGrid, string shipName, int shipSize)
+        private void placeShipRandomly(string[,] grid, string shipName, int shipSize)
         {
-            //Random random = new Random();
             bool placed = false;
 
             while (!placed)
             {
                 int row = random.Next(gridSize);
                 int column = random.Next(gridSize);
-                bool horizontal = random.Next(2) == 0; //οριζόντια είναι ίσο με 0 και κάθετα ίσο με 1 
+                bool horizontal = random.Next(2) == 0;
 
-               
-                if (canPlaceShip(tableGrid, row, column, shipSize, horizontal))
+                if (canPlaceShip(grid, row, column, shipSize, horizontal))
                 {
-
-                    for (int i = 0; i < shipSize; i++)
-                    {
-                        if (horizontal)
-                        {
-                            tableGrid[row, column + i] = shipName;
-                        }
-                        else
-                        {
-                            tableGrid[row + i, column] = shipName;
-                        }
-                    }
+                    placeShip(grid, row, column, shipSize, horizontal, shipName);
                     placed = true;
                 }
             }
@@ -77,25 +68,40 @@ namespace battleShips
         {
             if (horizontal)
             {
-                if (col + shipSize > gridSize) return false; // Υπέρβαση ορίου
+                if (col + shipSize > gridSize) return false;
                 for (int i = 0; i < shipSize; i++)
                 {
-                    if (!string.IsNullOrEmpty(grid[row, col + i])) return false; // Ήδη κατειλημμένο
+                    if (!string.IsNullOrEmpty(grid[row, col + i])) return false;
                 }
             }
             else
             {
-                if (row + shipSize > gridSize) return false; // Υπέρβαση ορίου
+                if (row + shipSize > gridSize) return false;
                 for (int i = 0; i < shipSize; i++)
                 {
-                    if (!string.IsNullOrEmpty(grid[row + i, col])) return false; // Ήδη κατειλημμένο
+                    if (!string.IsNullOrEmpty(grid[row + i, col])) return false;
                 }
             }
-
             return true;
         }
-        
-        
+
+        private void placeShip(string[,] grid, int row, int col, int shipSize, bool horizontal, string shipName)
+        {
+            for (int i = 0; i < shipSize; i++)
+            {
+                if (horizontal)
+                {
+                    grid[row, col + i] = shipName;
+                }
+                else
+                {
+                    grid[row + i, col] = shipName;
+                }
+            }
+        }
+
+ 
+
         public void renderGrid(TableLayoutPanel tableLayout, string[,] grid)
         {
             tableLayout.Controls.Clear();
@@ -106,39 +112,23 @@ namespace battleShips
             {
                 for (int col = 0; col < gridSize; col++)
                 {
-                    PictureBox shipImage = new PictureBox
+                    Button button = new Button
                     {
                         Dock = DockStyle.Fill,
-                        BorderStyle = BorderStyle.FixedSingle,
-                        BackColor = string.IsNullOrEmpty(grid[row, col]) ? Color.LightGray : Color.LightBlue,
-                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        BackColor = Color.LightGray,
+                        Tag = $"{(char)('Α' + row)}{col + 1}", // Αναπαράσταση θέσης
                     };
 
-                    if (!string.IsNullOrEmpty(grid[row, col]))
-                    {
-                        switch (grid[row, col])
-                        {
-                            case "Αεροπλανοφόρο":
-                                shipImage.Image = Properties.Resources.aircraftcarrier;
-                                break;
-                            case "Αντιτορπιλικό":
-                                shipImage.Image = Properties.Resources.destroyer;
-                                break;
-                            case "Πολεμικό":
-                                shipImage.Image = Properties.Resources.battleship;
-                                break;
-                            case "Υποβρύχιο":
-                                shipImage.Image = Properties.Resources.submarine;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    tableLayout.Controls.Add(shipImage, col, row);
+                    button.Click += (sender, e) => { attackManager.selectAttackPosition(button); };
+
+                    tableLayout.Controls.Add(button, col, row);
+                }
                 }
             }
+        public void revealShips(Button clickedButton)
+        {
+            attackManager.fire(clickedButton);
         }
-
-
+        }
     }
-}
+

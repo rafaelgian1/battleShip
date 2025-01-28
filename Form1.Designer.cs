@@ -162,6 +162,7 @@
             this.attackToOpponent.TabIndex = 5;
             this.attackToOpponent.Text = "FIRE!";
             this.attackToOpponent.UseVisualStyleBackColor = false;
+            this.attackToOpponent.Click += new System.EventHandler(this.attackToOpponent_Click);
             // 
             // panel1
             // 

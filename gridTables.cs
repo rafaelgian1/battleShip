@@ -11,21 +11,23 @@ namespace battleShips
 
     internal class gridTables
     {
-        public void getGrids(TableLayoutPanel playerGrid,TableLayoutPanel enemyGrid, int gridSize)
+
+
+        public void getGrids(TableLayoutPanel playerGrid, TableLayoutPanel enemyGrid, int gridSize)
         {
             generatePlayerGrid(playerGrid, gridSize);
             generateEnemyGrid(enemyGrid, gridSize);
 
         }
-            
-        private void generatePlayerGrid(TableLayoutPanel playerGrid, int gridSize)
+
+        public void generatePlayerGrid(TableLayoutPanel playerGrid, int gridSize)
         {
             playerGrid.Controls.Clear();
             playerGrid.RowCount = gridSize;
             playerGrid.ColumnCount = gridSize;
             playerGrid.RowStyles.Clear();
             playerGrid.ColumnStyles.Clear();
-            
+
             for (int i = 0; i < gridSize; i++)
             {
                 playerGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / gridSize));
@@ -39,7 +41,7 @@ namespace battleShips
                     {
                         Dock = DockStyle.Fill,
                         BackColor = Color.Gray,
-                        Tag = $"{(char)('Α' + row)}{col + 1}" 
+                        Tag = $"{(char)('Α' + row)}{col + 1}"
                     };
                     btn.Click += Button_Click;
 
@@ -48,8 +50,8 @@ namespace battleShips
             }
         }
 
-        private void generateEnemyGrid(TableLayoutPanel enemyGrid, int gridSize){
-
+        public void generateEnemyGrid(TableLayoutPanel enemyGrid, int gridSize)
+        {
             enemyGrid.Controls.Clear();
             enemyGrid.RowCount = gridSize;
             enemyGrid.ColumnCount = gridSize;
@@ -68,9 +70,9 @@ namespace battleShips
                     Button btn = new Button
                     {
                         BackColor = Color.Gray,
-                        Tag = $"{(char)('Α' + row)}{col + 1}" 
+                        Tag = $"{(char)('Α' + row)}{col + 1}"
                     };
-                    btn.Click += Button_Click;
+                    btn.Click += enemyGrid_Click;
 
                     enemyGrid.Controls.Add(btn, col, row);
                 }
@@ -84,6 +86,18 @@ namespace battleShips
             if (clickedButton != null)
             {
                 MessageBox.Show($"You clicked {clickedButton.Tag}");
+            }
+        }
+        private void enemyGrid_Click(object sender, EventArgs e)
+        {
+            Button clickedButton = sender as Button;
+            if (clickedButton != null)
+            {
+                var attackManager = new selectAttackAreas();  // Create the attack manager here
+                bool hit = attackManager.select(clickedButton);
+
+                clickedButton.BackColor = hit ? Color.Red : Color.Black;
+                clickedButton.Enabled = false;
             }
         }
     }

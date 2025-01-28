@@ -113,6 +113,16 @@ namespace battleShips.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap missedTarget {
+            get {
+                object obj = ResourceManager.GetObject("missedTarget", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap submarine {
             get {
                 object obj = ResourceManager.GetObject("submarine", resourceCulture);
