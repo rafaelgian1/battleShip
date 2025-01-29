@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,14 +47,36 @@ namespace battleShips
                 return false;
             }
             hitPositions.Add(position);
-            return true;
+            bool hit = IsShipHit(position);
+
+            clickedButton.Enabled = false;
+            if (hit)
+            {
+                clickedButton.BackColor = Color.Red;
+                clickedButton.Text = "X";
+            }
+            else
+            {
+                clickedButton.BackColor= Color.Green;
+                clickedButton.Text = "-";
+            }
+            Console.WriteLine($"Clicked position: {position}");
+            return hit;
         }
 
         public bool IsShipHit(string position)
         {
+            if (string.IsNullOrEmpty(position) || position.Length < 2)
+                return false;
             int row = position[0] - 'A'; // Μετατρέπει το γράμμα σε αριθμό
-            int col = int.Parse(position.Substring(1)) - 1; // Μετατρέπει τον αριθμό σε στήλη
-            return !string.IsNullOrEmpty(enemyGrid[row, col]); //αν δεν είναι κενό το κουμπί του πίνακα το συγκεκριμένο τότε επιστρέφει ακριβώς την τοποθεσία που βρίσκεται
+            if (!int.TryParse(position.Substring(1), out int col))
+                return false;
+
+            col -= 1;
+            if (row < 0 || row >= enemyGrid.GetLength(0) || col < 0 || col >= enemyGrid.GetLength(1)){  
+            return false;
+        }
+            return !string.IsNullOrEmpty(enemyGrid[row, col]);
         }
         public bool AreAllShipsSunk()
         {

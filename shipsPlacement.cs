@@ -119,7 +119,7 @@ namespace battleShips
                     {
                         Dock = DockStyle.Fill,
                         BackColor = Color.LightGray,
-                        Tag = $"{(char)('Α' + row)}{col + 1}",
+                        Tag = $"{(char)('A' + row)}{col + 1}",
                         Text = $"{(char)('Α' + row)}{col + 1}",
                         BackgroundImageLayout = ImageLayout.Stretch
                     };

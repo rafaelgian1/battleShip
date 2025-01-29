@@ -18,7 +18,6 @@ namespace battleShips
         public static int BoardSize = 10; // Μέγεθος πίνακα 10x10
         private shipsPlacement ships;
         private selectAttackAreas attackManager;
-        //private Timer enemyTurnTimer;
         private int playerScore = 0;
         private int enemyScore = 0;
 
@@ -50,7 +49,7 @@ namespace battleShips
             EnemyMove();
         }
 
-        private void enemyuTableLayoutPanel_Click(object sender, EventArgs e)
+        private void EnemyTableLayoutPanel_Click(object sender, EventArgs e)
         {
             if(sender is Button clickedButton)
             {
@@ -58,20 +57,22 @@ namespace battleShips
                 clickedButton.Enabled = false;
                 if (hit)
                 {
+                    MessageBox.Show("epitixia");
                     clickedButton.BackColor = Color.Red;
                     clickedButton.Text = "X";
                 }
                 else
                 {
+                    MessageBox.Show("apotixia");
                     clickedButton.BackColor = Color.Green;
                     clickedButton.Text = "-";
                 }
-                PlayerMove(sender,e);
+                PlayerMove(clickedButton);
             }
         }
-        private void PlayerMove(object sender, EventArgs E)
+        private void PlayerMove(Button clickedButton)
         {
-            Button clickedButton = sender as Button;
+            
             if (clickedButton == null) return;
 
             if (attackManager.selectAttackPosition(clickedButton))
@@ -100,11 +101,11 @@ namespace battleShips
                 if (attackManager.IsShipHit(position))
                 {
                     enemyScore++;
-                    enemyScoreIndex.Text = "${enemyScoreIndex}";
+                    enemyScoreIndex.Text = $"{enemyScore}";
                 }
             }
             if (attackManager.AreAllPlayerShipSunk()){
-                MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScoreIndex} πόντους");
+                MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} πόντους");
             }
         }
         private void RestartButton_Click(object sender, EventArgs e)
@@ -119,6 +120,9 @@ namespace battleShips
 
             ships = new shipsPlacement(BoardSize);
             attackManager = ships.attackManager;
+            ships.createGrid();
+            ships.renderGrid(playerTableLayoutPanel, ships.playerGrid, revealShips: true);
+            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: false);
             InitializeGame();
         }
     }
