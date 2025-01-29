@@ -24,7 +24,7 @@ namespace battleShips
         {
             playerGrid = new string[gridSize, gridSize];
             enemyGrid = new string[gridSize, gridSize];
-            attackManager = new selectAttackAreas(enemyGrid);
+            attackManager = new selectAttackAreas(enemyGrid, playerGrid);
 
             random = new Random();
             ships = new Dictionary<string, shipInformation>
@@ -124,7 +124,7 @@ namespace battleShips
                         BackgroundImageLayout = ImageLayout.Stretch
                     };
 
-                    if (revealShips && !string.IsNullOrEmpty(grid[row, col]) && ships.ContainsKey(grid[row,col]))
+                    if (revealShips && !string.IsNullOrEmpty(grid[row, col]) && ships.ContainsKey(grid[row, col]))
                     {
                         button.BackgroundImage = ships[grid[row, col]].shipImage;
                     }
@@ -134,11 +134,115 @@ namespace battleShips
                 }
             }
         }
-        public void revealShips(Button clickedButton)
-        {
-            attackManager.fire(clickedButton);
-        }
     }
 }
+
+
+//    }
+//}
+//public class shipInformation
+//{
+//    public int shipLength { get; set; }
+//    public Image shipImage { get; set; }
+//}
+
+//public void createGrid()
+//{
+//    foreach (var ship in ships)
+//    {
+//        placeShipRandomly(playerGrid, ship.Key, ship.Value.shipLength);
+//        placeShipRandomly(enemyGrid, ship.Key, ship.Value.shipLength);
+//    }
+//}
+
+//private void placeShipRandomly(string[,] grid, string shipName, int shipSize)
+//{
+//    bool placed = false;
+
+//    while (!placed)
+//    {
+//        int row = random.Next(gridSize);
+//        int col = random.Next(gridSize);
+//        bool horizontal = random.Next(2) == 0;
+
+//        if (canPlaceShip(grid, row, col, shipSize, horizontal))
+//        {
+//            placeShip(grid, row, col, shipSize, horizontal, shipName);
+//            placed = true;
+//        }
+//    }
+//}
+
+//private bool canPlaceShip(string[,] grid, int row, int col, int shipSize, bool horizontal)
+//{
+//    if (horizontal)
+//    {
+//        if (col + shipSize > gridSize) return false;
+//        for (int i = 0; i < shipSize; i++)
+//        {
+//            if (!string.IsNullOrEmpty(grid[row, col + i])) return false;
+//        }
+//    }
+//    else
+//    {
+//        if (row + shipSize > gridSize) return false;
+//        for (int i = 0; i < shipSize; i++)
+//        {
+//            if (!string.IsNullOrEmpty(grid[row + i, col])) return false;
+//        }
+//    }
+//    return true;
+//}
+
+//private void placeShip(string[,] grid, int row, int col, int shipSize, bool horizontal, string shipName)
+//{
+//    for (int i = 0; i < shipSize; i++)
+//    {
+//        if (horizontal)
+//        {
+//            grid[row, col + i] = shipName;
+//        }
+//        else
+//        {
+//            grid[row + i, col] = shipName;
+//        }
+//    }
+//}
+
+//public void renderGrid(TableLayoutPanel tableLayout, string[,] grid, bool revealShips = false)
+//{
+//    tableLayout.Controls.Clear();
+//    tableLayout.RowCount = gridSize;
+//    tableLayout.ColumnCount = gridSize;
+
+//    for (int row = 0; row < gridSize; row++)
+//    {
+//        for (int col = 0; col < gridSize; col++)
+//        {
+//            Button button = new Button
+//            {
+//                Dock = DockStyle.Fill,
+//                BackColor = Color.LightGray,
+//                Tag = $"{(char)('Α' + row)}{col + 1}",
+//                Text = $"{(char)('Α' + row)}{col + 1}",
+//                BackgroundImageLayout = ImageLayout.Stretch
+//            };
+
+//            if (revealShips && !string.IsNullOrEmpty(grid[row, col]) && ships.ContainsKey(grid[row,col]))
+//            {
+//                button.BackgroundImage = ships[grid[row, col]].shipImage;
+//            }
+//            button.Click += (sender, e) => { attackManager.selectAttackPosition(button); };
+
+//            tableLayout.Controls.Add(button, col, row);
+//        }
+//    }
+//}
+//public void revealShips(Button clickedButton)
+//{
+//    attackManager.fire(clickedButton);
+//}
+//    }
+//}
 
 

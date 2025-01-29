@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.scoreIndex1 = new System.Windows.Forms.Label();
+            this.components = new System.ComponentModel.Container();
+            this.playerScoreIndex = new System.Windows.Forms.Label();
             this.playerScore1 = new System.Windows.Forms.Label();
             this.playerScore2 = new System.Windows.Forms.Label();
-            this.scoreIndex2 = new System.Windows.Forms.Label();
+            this.enemyScoreIndex = new System.Windows.Forms.Label();
             this.roundsIndex = new System.Windows.Forms.Label();
-            this.attackToOpponent = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playerTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.column1 = new System.Windows.Forms.Label();
@@ -81,22 +81,24 @@
             this.label21 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.ΝΑΥΜΑΧΙΑ = new System.Windows.Forms.Label();
+            this.RestartButton = new System.Windows.Forms.Button();
+            this.enemyTurnTimer = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // scoreIndex1
+            // playerScoreIndex
             // 
-            this.scoreIndex1.AutoSize = true;
-            this.scoreIndex1.BackColor = System.Drawing.Color.Transparent;
-            this.scoreIndex1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.scoreIndex1.ForeColor = System.Drawing.Color.White;
-            this.scoreIndex1.Location = new System.Drawing.Point(402, 1391);
-            this.scoreIndex1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.scoreIndex1.Name = "scoreIndex1";
-            this.scoreIndex1.Size = new System.Drawing.Size(80, 55);
-            this.scoreIndex1.TabIndex = 0;
-            this.scoreIndex1.Text = "00";
+            this.playerScoreIndex.AutoSize = true;
+            this.playerScoreIndex.BackColor = System.Drawing.Color.Transparent;
+            this.playerScoreIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playerScoreIndex.ForeColor = System.Drawing.Color.White;
+            this.playerScoreIndex.Location = new System.Drawing.Point(402, 1391);
+            this.playerScoreIndex.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.playerScoreIndex.Name = "playerScoreIndex";
+            this.playerScoreIndex.Size = new System.Drawing.Size(80, 55);
+            this.playerScoreIndex.TabIndex = 0;
+            this.playerScoreIndex.Text = "00";
             // 
             // playerScore1
             // 
@@ -125,18 +127,18 @@
             this.playerScore2.TabIndex = 2;
             this.playerScore2.Text = "Enemy Score:";
             // 
-            // scoreIndex2
+            // enemyScoreIndex
             // 
-            this.scoreIndex2.AutoSize = true;
-            this.scoreIndex2.BackColor = System.Drawing.Color.Transparent;
-            this.scoreIndex2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.scoreIndex2.ForeColor = System.Drawing.Color.Red;
-            this.scoreIndex2.Location = new System.Drawing.Point(2182, 87);
-            this.scoreIndex2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.scoreIndex2.Name = "scoreIndex2";
-            this.scoreIndex2.Size = new System.Drawing.Size(80, 55);
-            this.scoreIndex2.TabIndex = 0;
-            this.scoreIndex2.Text = "00";
+            this.enemyScoreIndex.AutoSize = true;
+            this.enemyScoreIndex.BackColor = System.Drawing.Color.Transparent;
+            this.enemyScoreIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.enemyScoreIndex.ForeColor = System.Drawing.Color.Red;
+            this.enemyScoreIndex.Location = new System.Drawing.Point(2182, 87);
+            this.enemyScoreIndex.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.enemyScoreIndex.Name = "enemyScoreIndex";
+            this.enemyScoreIndex.Size = new System.Drawing.Size(80, 55);
+            this.enemyScoreIndex.TabIndex = 0;
+            this.enemyScoreIndex.Text = "00";
             // 
             // roundsIndex
             // 
@@ -150,19 +152,6 @@
             this.roundsIndex.Size = new System.Drawing.Size(80, 55);
             this.roundsIndex.TabIndex = 0;
             this.roundsIndex.Text = "00";
-            // 
-            // attackToOpponent
-            // 
-            this.attackToOpponent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.attackToOpponent.Font = new System.Drawing.Font("Segoe Script", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.attackToOpponent.Location = new System.Drawing.Point(2156, 1382);
-            this.attackToOpponent.Margin = new System.Windows.Forms.Padding(6);
-            this.attackToOpponent.Name = "attackToOpponent";
-            this.attackToOpponent.Size = new System.Drawing.Size(266, 94);
-            this.attackToOpponent.TabIndex = 5;
-            this.attackToOpponent.Text = "FIRE!";
-            this.attackToOpponent.UseVisualStyleBackColor = false;
-            this.attackToOpponent.Click += new System.EventHandler(this.attackToOpponent_Click);
             // 
             // panel1
             // 
@@ -497,6 +486,7 @@
             this.enemyTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.enemyTableLayoutPanel.Size = new System.Drawing.Size(1123, 1051);
             this.enemyTableLayoutPanel.TabIndex = 7;
+            this.enemyTableLayoutPanel.Click += new System.EventHandler(this.enemyuTableLayoutPanel_Click);
             // 
             // label2
             // 
@@ -762,6 +752,23 @@
             this.ΝΑΥΜΑΧΙΑ.TabIndex = 11;
             this.ΝΑΥΜΑΧΙΑ.Text = "ΝΑΥΜΑΧΙΑ";
             // 
+            // RestartButton
+            // 
+            this.RestartButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.RestartButton.Font = new System.Drawing.Font("Segoe Print", 28.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RestartButton.ForeColor = System.Drawing.Color.Transparent;
+            this.RestartButton.Location = new System.Drawing.Point(1822, 1391);
+            this.RestartButton.Name = "RestartButton";
+            this.RestartButton.Size = new System.Drawing.Size(622, 161);
+            this.RestartButton.TabIndex = 12;
+            this.RestartButton.Text = "Restart Game";
+            this.RestartButton.UseVisualStyleBackColor = false;
+            this.RestartButton.Click += new System.EventHandler(this.RestartButton_Click);
+            // 
+            // enemyTurnTimer
+            // 
+            this.enemyTurnTimer.Tick += new System.EventHandler(this.EnemyTurnTimer_Tick);
+            // 
             // NavalBattles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -770,6 +777,7 @@
             this.BackgroundImage = global::battleShips.Properties.Resources.work_blockchain_game_on_echo_smart_contracts_1920_6;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(2490, 1581);
+            this.Controls.Add(this.RestartButton);
             this.Controls.Add(this.ΝΑΥΜΑΧΙΑ);
             this.Controls.Add(this.label22);
             this.Controls.Add(this.column10);
@@ -815,19 +823,17 @@
             this.Controls.Add(this.column1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.attackToOpponent);
             this.Controls.Add(this.playerScore2);
             this.Controls.Add(this.playerScore1);
             this.Controls.Add(this.roundsIndex);
-            this.Controls.Add(this.scoreIndex2);
-            this.Controls.Add(this.scoreIndex1);
+            this.Controls.Add(this.enemyScoreIndex);
+            this.Controls.Add(this.playerScoreIndex);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "NavalBattles";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "battleShips";
-            this.Load += new System.EventHandler(this.NavalBattles_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -839,12 +845,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Label scoreIndex1;
+        private System.Windows.Forms.Label playerScoreIndex;
         private System.Windows.Forms.Label playerScore1;
         private System.Windows.Forms.Label playerScore2;
-        private System.Windows.Forms.Label scoreIndex2;
+        private System.Windows.Forms.Label enemyScoreIndex;
         private System.Windows.Forms.Label roundsIndex;
-        private System.Windows.Forms.Button attackToOpponent;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label column1;
         private System.Windows.Forms.TableLayoutPanel playerTableLayoutPanel;
@@ -892,6 +897,8 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label ΝΑΥΜΑΧΙΑ;
+        private System.Windows.Forms.Button RestartButton;
+        private System.Windows.Forms.Timer enemyTurnTimer;
     }
 }
 
