@@ -15,13 +15,14 @@ namespace battleShips
 {
     public partial class NavalBattles : Form
     {
-        public static int BoardSize = 10; // Μέγεθος πίνακα 10x10
+        public static int BoardSize = 10; 
         private shipsPlacement ships;
         private selectAttackAreas attackManager;
         private int playerScore = 0;
         private int enemyScore = 0;
-
-
+        private int playerTries = 0;
+        private int enemyTries = 0;
+        
 
         public NavalBattles()
         {
@@ -29,6 +30,7 @@ namespace battleShips
             InitializeComponent();
             ships = new shipsPlacement(BoardSize);
             attackManager = ships.attackManager;
+            attackManager.PlayerMoveRequested += PlayerMove;
             InitializeGame();
         }
 
@@ -45,69 +47,87 @@ namespace battleShips
 
         private void EnemyTurnTimer_Tick(object sender, EventArgs E)
         {
-            enemyTurnTimer.Stop();
             EnemyMove();
+            enemyTurnTimer.Stop();
         }
-
-        private void EnemyTableLayoutPanel_Click(object sender, EventArgs e)
+        public void setPlayerMove(Button clickedButton)
         {
-            if(sender is Button clickedButton)
+            PlayerMove(clickedButton);
+        }
+        
+        private void PlayerMove(Button clickedButton)
+        {
+            playerTries++;
+            string position = clickedButton.Tag.ToString();
+            
+            if (attackManager.IsEnemyShipHit(position)) {
+                    
+                    playerScore++;
+                    playerScoreIndex.Text = $"{playerScore}";
+                    attackManager.addEnemyPosition(position);
+                    attackManager.removeEnemyAvailablePosition(position);
+            }
+
+            if (attackManager.AreAllEnemyShipsSunk()) {
+                MessageBox.Show($"Συγχαρητήρια! Βύθισες όλα τα πλοία του αντιπάλου σου με συνολικό σκορ {playerScore} - {enemyScore}" +
+                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries}");
+                
+                //RestartGame();
+            }
+                enemyTurnTimer.Start();
+            }
+
+        private void EnemyMove()
+        {
+            enemyTries++;
+            string position = attackManager.getPosition();
+            Button attackedButton = GetButtonFromPosition(position);
+
+            Console.WriteLine("o antipalos epelexe " + position);//για να βλεπουμε στο debugging την επιλογή του υπολογιστή
+            if (position != null)
             {
-                bool hit = attackManager.selectAttackPosition(clickedButton);
-                clickedButton.Enabled = false;
-                if (hit)
+
+                if (attackManager.IsShipHit(position))
                 {
-                    MessageBox.Show("epitixia");
-                    clickedButton.BackColor = Color.Red;
-                    clickedButton.Text = "X";
+                    attackedButton.BackColor = Color.Red;
+                    enemyScore++;
+                    enemyScoreIndex.Text = $"{enemyScore}";
+                    attackManager.addPlayerPosition(position);
                 }
                 else
                 {
-                    MessageBox.Show("apotixia");
-                    clickedButton.BackColor = Color.Green;
-                    clickedButton.Text = "-";
+                    attackedButton.BackColor = Color.Green;
+                    attackedButton.Text = "-";
                 }
-                PlayerMove(clickedButton);
+            }
+            if (attackManager.AreAllPlayerShipSunk())
+            {
+                MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} - {playerScore} πόντους" +
+                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries}");
             }
         }
-        private void PlayerMove(Button clickedButton)
+
+        private Button GetButtonFromPosition(string position)
         {
+            if (string.IsNullOrEmpty(position) || position.Length < 2) return null;
+
+            int row = position[0] - 'A';
+            if (!int.TryParse(position.Substring(1), out int col)) return null;
+
+            col -= 1; 
+
             
-            if (clickedButton == null) return;
-
-            if (attackManager.selectAttackPosition(clickedButton))
+            foreach (Control control in playerTableLayoutPanel.Controls)
             {
-                clickedButton.Enabled = false;
-                if (attackManager.IsShipHit(clickedButton.Tag.ToString()))
+                if (control is Button button && button.Tag?.ToString() == position)
                 {
-                    playerScore++;
-                    playerScoreIndex.Text = $"{playerScore}";
+                    return button;
                 }
+            }
 
-                if (attackManager.AreAllShipsSunk())
-                {
-                    MessageBox.Show("Συγχαρητήρια! Νίκησες!");
-                    return;
-                }
-                enemyTurnTimer.Start();
-            }
+            return null;
         }
-        private void EnemyMove()
-        {
-            string position = attackManager.getPosition();
-            if (position != null)
-            {
-                attackManager.AttackPlayer(position);
-                if (attackManager.IsShipHit(position))
-                {
-                    enemyScore++;
-                    enemyScoreIndex.Text = $"{enemyScore}";
-                }
-            }
-            if (attackManager.AreAllPlayerShipSunk()){
-                MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} πόντους");
-            }
-        }
+
         private void RestartButton_Click(object sender, EventArgs e)
         {
             RestartGame();
@@ -117,6 +137,7 @@ namespace battleShips
             enemyScore = 0;
             playerScoreIndex.Text = "0";
             enemyScoreIndex.Text = "0";
+            attackManager.PlayerMoveRequested += PlayerMove;
 
             ships = new shipsPlacement(BoardSize);
             attackManager = ships.attackManager;
@@ -125,5 +146,7 @@ namespace battleShips
             ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: false);
             InitializeGame();
         }
+
+        
     }
 }

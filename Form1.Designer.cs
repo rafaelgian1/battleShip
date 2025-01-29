@@ -486,7 +486,6 @@
             this.enemyTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.enemyTableLayoutPanel.Size = new System.Drawing.Size(1123, 1051);
             this.enemyTableLayoutPanel.TabIndex = 7;
-            this.enemyTableLayoutPanel.Click += new System.EventHandler(this.EnemyTableLayoutPanel_Click);
             // 
             // label2
             // 

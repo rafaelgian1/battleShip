@@ -18,8 +18,12 @@ namespace battleShips
     {
         private string[,] enemyGrid;
         private string[,] playerGrid;
-        private HashSet<string> hitPositions = new HashSet<string>();
-        private List<string> availablePositions;
+        public HashSet<string> playerHitPositions = new HashSet<string>();
+        private HashSet<string> enemyHitPositions = new HashSet<string>();
+        private List<string> playerAvailablePositions;
+        private List<string> enemyAvailablePositions;
+
+        public event Action<Button> PlayerMoveRequested;
 
         private Random random = new Random();
 
@@ -27,26 +31,29 @@ namespace battleShips
 
         public selectAttackAreas(string[,] enemyGrid, string[,] playerGrid)
         {
+
             this.enemyGrid = enemyGrid;
             this.playerGrid = playerGrid;
-            availablePositions = new List<string>();
+            playerAvailablePositions = new List<string>();
+            enemyAvailablePositions = new List<string>();
             for (int row = 0; row < enemyGrid.GetLength(0); row++)
             {
                 for (int col = 0; col < enemyGrid.GetLength(1); col++)
                 {
-                    availablePositions.Add($"{(char)('A' + row)}{col + 1}");
+                    playerAvailablePositions.Add($"{(char)('A' + row)}{col + 1}");
+                    enemyAvailablePositions.Add($"{(char)('A' + row)}{col + 1}");
                 }
             }
         }
 
-        public bool selectAttackPosition(Button clickedButton)
+        public bool SelectAttackPosition(Button clickedButton)
         {
             string position = clickedButton.Tag.ToString();
-            if (hitPositions.Contains(position))
+            if (enemyHitPositions.Contains(position))
             {
                 return false;
             }
-            hitPositions.Add(position);
+            
             bool hit = IsShipHit(position);
 
             clickedButton.Enabled = false;
@@ -57,10 +64,12 @@ namespace battleShips
             }
             else
             {
-                clickedButton.BackColor= Color.Green;
+                clickedButton.BackColor = Color.Green;
                 clickedButton.Text = "-";
             }
+            PlayerMoveRequested?.Invoke(clickedButton);
             Console.WriteLine($"Clicked position: {position}");
+
             return hit;
         }
 
@@ -73,40 +82,69 @@ namespace battleShips
                 return false;
 
             col -= 1;
-            if (row < 0 || row >= enemyGrid.GetLength(0) || col < 0 || col >= enemyGrid.GetLength(1)){  
-            return false;
-        }
+            if (row < 0 || row >= playerGrid.GetLength(0) || col < 0 || col >= playerGrid.GetLength(1))
+            {
+                return false;
+            }
             return !string.IsNullOrEmpty(enemyGrid[row, col]);
         }
-        public bool AreAllShipsSunk()
+
+        public bool IsEnemyShipHit(string position)
         {
-            return hitPositions.Count == enemyGrid.Cast<string>().Count(pos => !string.IsNullOrEmpty(pos));//Ελέγχει αν τα συνολικά κτυπήματα πλοίων ισούνται με τον αριθμό των κελιών τα οποία ΔΕΝ είναι κένα στον πίνακα του αντιπάλου
+            if (string.IsNullOrEmpty(position) || position.Length < 2)
+                return false;
+
+            int row = position[0] - 'A';
+            if (!int.TryParse(position.Substring(1), out int col))
+                return false;
+
+            col -= 1; // Μετατροπή σε μηδενική βάση
+            return !string.IsNullOrEmpty(enemyGrid[row, col]); // Έλεγχος αν υπάρχει πλοίο
         }
-        
+
+
         public string getPosition()
         {
             return getRandomAttackPosition();
         }
         private string getRandomAttackPosition()
         {
-            if (availablePositions.Count == 0)
+            if (playerAvailablePositions.Count == 0)
             {
                 return null;
             }
-            int index = random.Next(availablePositions.Count);
-            string position = availablePositions[index]; //Αρχικοποιεί την τυχαία τοποθεσία σε μια μεταβλητή string
-            availablePositions.RemoveAt(index); //Αφαιρεί από την λίστα με της διαθέσιμες τοποθεσίες την συγκεκριμένη τοποθεσία που επιλέχθηκε τυχαία για την επίθεση του αντιπάλου.
+            int index = random.Next(playerAvailablePositions.Count);
+            string position = playerAvailablePositions[index]; //Αρχικοποιεί την τυχαία τοποθεσία σε μια μεταβλητή string
+            playerAvailablePositions.Remove(position); //Αφαιρεί από την λίστα με της διαθέσιμες τοποθεσίες την συγκεκριμένη τοποθεσία που επιλέχθηκε τυχαία για την επίθεση του αντιπάλου.
+            
             return position;
         }
 
-        public void AttackPlayer(string position)
+
+
+        public void addEnemyPosition(string position)
         {
-            hitPositions.Add(position);//Προσθέτει στο hashset την τοποθεσία που επέλεξε ο αντίπαλος να επιτεθεί στον παίκτη.
+            enemyHitPositions.Add(position);
+            
+        }
+        public void removeEnemyAvailablePosition(string position)
+        {
+           enemyAvailablePositions.Remove(position);
+           
+        }
+        public void addPlayerPosition(string position)
+        {
+            playerHitPositions.Add(position);
+            playerAvailablePositions.Remove(position);
         }
 
         public bool AreAllPlayerShipSunk()
         {
-            return hitPositions.Count == playerGrid.Cast<string>().Count(pos => !string.IsNullOrEmpty(pos));//Επιστρέφει αν οι συνολικές τοποθεσίες που βρίσκονται στο hitPosition είναι ίσες με όλες τις μη κενές τοποθεσίες πάνω στον πίνακα του παίκτη με την χρήση point.
+            return playerHitPositions.Count == 14;//Συνολικά και τα 4 πλοία καταλαμβάνουν 14 τετραγωνάκια.
+        }
+        public bool AreAllEnemyShipsSunk()
+        {
+            return enemyHitPositions.Count == 14;
         }
     }
 }
