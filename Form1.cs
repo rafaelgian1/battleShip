@@ -22,6 +22,10 @@ namespace battleShips
         private int enemyScore = 0;
         private int playerTries = 0;
         private int enemyTries = 0;
+        private DateTime gameStartTime;
+        private TimeSpan elapsedTime;
+        private DateTime gameEndTime; //Για να αποθηκεύεται σε πιο λεπτό τελειώνει το παιχνίδι και να παρουσιάζεται στον χρήστη
+        private Label timerLabel = new Label();
         
 
         public NavalBattles()
@@ -40,8 +44,9 @@ namespace battleShips
             ships.renderGrid(playerTableLayoutPanel, ships.playerGrid, revealShips: true);
             ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: false);
 
+            
             enemyTurnTimer = new Timer();
-            enemyTurnTimer.Interval = 1000;
+            //enemyTurnTimer.Interval = 1000; //Για να γίνεται η κίνηση του αντιπάλου αυτόματα χωρίς να υπάρχει καθυστέρηση του interval
             enemyTurnTimer.Tick += EnemyTurnTimer_Tick;
         }
 
@@ -69,8 +74,10 @@ namespace battleShips
             }
 
             if (attackManager.AreAllEnemyShipsSunk()) {
+                var timePlayed = elapsedTime.ToString(@"mm\:ss");
+                gameTimer.Stop();
                 MessageBox.Show($"Συγχαρητήρια! Βύθισες όλα τα πλοία του αντιπάλου σου με συνολικό σκορ {playerScore} - {enemyScore}" +
-                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries}");
+                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!");
                 
                 //RestartGame();
             }
@@ -102,8 +109,12 @@ namespace battleShips
             }
             if (attackManager.AreAllPlayerShipSunk())
             {
+
+                var timePlayed = elapsedTime.ToString(@"mm\:ss");
+                gameTimer.Stop();
                 MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} - {playerScore} πόντους" +
-                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries}");
+                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!");
+                
             }
         }
 
@@ -147,6 +158,22 @@ namespace battleShips
             InitializeGame();
         }
 
-        
+        private void NavalBattles_Load(object sender, EventArgs e)
+        {
+            gameStartTime = DateTime.Now;
+            elapsedTime = TimeSpan.Zero;
+            gameTimer.Start();
+        }
+
+        private void gameTimer_Tick(object sender, EventArgs e)
+        {
+            elapsedTime = DateTime.Now - gameStartTime;
+            timerLabel.Text = elapsedTime.ToString(@"mm\:ss");
+            timerLabel.Location = new Point(this.ClientSize.Width - this.Width, 0);
+            timerLabel.Font = new Font("Arial", 16, FontStyle.Bold);
+            timerLabel.BackColor = Color.Transparent;
+            timerLabel.ForeColor = Color.Orange;
+            this.Controls.Add(timerLabel);
+        }
     }
 }

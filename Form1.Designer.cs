@@ -33,7 +33,6 @@
             this.playerScore1 = new System.Windows.Forms.Label();
             this.playerScore2 = new System.Windows.Forms.Label();
             this.enemyScoreIndex = new System.Windows.Forms.Label();
-            this.roundsIndex = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.playerTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.column1 = new System.Windows.Forms.Label();
@@ -83,6 +82,7 @@
             this.ΝΑΥΜΑΧΙΑ = new System.Windows.Forms.Label();
             this.RestartButton = new System.Windows.Forms.Button();
             this.enemyTurnTimer = new System.Windows.Forms.Timer(this.components);
+            this.gameTimer = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -139,19 +139,6 @@
             this.enemyScoreIndex.Size = new System.Drawing.Size(80, 55);
             this.enemyScoreIndex.TabIndex = 0;
             this.enemyScoreIndex.Text = "00";
-            // 
-            // roundsIndex
-            // 
-            this.roundsIndex.AutoSize = true;
-            this.roundsIndex.BackColor = System.Drawing.Color.Transparent;
-            this.roundsIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.roundsIndex.ForeColor = System.Drawing.Color.White;
-            this.roundsIndex.Location = new System.Drawing.Point(2500, 49);
-            this.roundsIndex.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.roundsIndex.Name = "roundsIndex";
-            this.roundsIndex.Size = new System.Drawing.Size(80, 55);
-            this.roundsIndex.TabIndex = 0;
-            this.roundsIndex.Text = "00";
             // 
             // panel1
             // 
@@ -768,6 +755,11 @@
             // 
             this.enemyTurnTimer.Tick += new System.EventHandler(this.EnemyTurnTimer_Tick);
             // 
+            // gameTimer
+            // 
+            this.gameTimer.Interval = 1000;
+            this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
+            // 
             // NavalBattles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -775,7 +767,7 @@
             this.AutoSize = true;
             this.BackgroundImage = global::battleShips.Properties.Resources.work_blockchain_game_on_echo_smart_contracts_1920_6;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(2490, 1581);
+            this.ClientSize = new System.Drawing.Size(2635, 1581);
             this.Controls.Add(this.RestartButton);
             this.Controls.Add(this.ΝΑΥΜΑΧΙΑ);
             this.Controls.Add(this.label22);
@@ -824,7 +816,6 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.playerScore2);
             this.Controls.Add(this.playerScore1);
-            this.Controls.Add(this.roundsIndex);
             this.Controls.Add(this.enemyScoreIndex);
             this.Controls.Add(this.playerScoreIndex);
             this.DoubleBuffered = true;
@@ -833,6 +824,7 @@
             this.Name = "NavalBattles";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "battleShips";
+            this.Load += new System.EventHandler(this.NavalBattles_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -848,7 +840,6 @@
         private System.Windows.Forms.Label playerScore1;
         private System.Windows.Forms.Label playerScore2;
         private System.Windows.Forms.Label enemyScoreIndex;
-        private System.Windows.Forms.Label roundsIndex;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label column1;
         private System.Windows.Forms.TableLayoutPanel playerTableLayoutPanel;
@@ -898,6 +889,7 @@
         private System.Windows.Forms.Label ΝΑΥΜΑΧΙΑ;
         private System.Windows.Forms.Button RestartButton;
         private System.Windows.Forms.Timer enemyTurnTimer;
+        private System.Windows.Forms.Timer gameTimer;
     }
 }
 
