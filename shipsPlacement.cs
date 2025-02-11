@@ -17,17 +17,21 @@ namespace battleShips
         public string[,] enemyGrid { get; private set; }
         public selectAttackAreas attackManager { get; private set; }
         private Random random;
-        private Dictionary<string, shipInformation> ships;
+        public Dictionary<string, shipInformation> ships;
+        public string shipName;
+
+        public Dictionary<string, int> playerShipLives;
+        public Dictionary<string, int> enemyShipLives;
 
 
         public shipsPlacement(int gridSize)
         {
             playerGrid = new string[gridSize, gridSize];
             enemyGrid = new string[gridSize, gridSize];
-            
+
             attackManager = new selectAttackAreas(enemyGrid, playerGrid);
             random = new Random();
-            
+
             ships = new Dictionary<string, shipInformation>
             {
                 { "Aircraft Carrier", new shipInformation { shipLength = 5, shipImage = Properties.Resources.aircraftcarrier } },
@@ -35,6 +39,8 @@ namespace battleShips
                 { "Battleship", new shipInformation { shipLength = 3, shipImage = Properties.Resources.battleship } },
                 { "Submarine", new shipInformation { shipLength = 2, shipImage = Properties.Resources.submarine } }
             };
+            playerShipLives = ships.ToDictionary(ship => ship.Key, ship => ship.Value.shipLength); //Χρησιμοποιώ pointer για να κανει point στην μνήμη το περιεχόμενο του dictionary που περιέχει τα στοιχεία κάθε πλοίου και να χρησιμοποιήσει ουσιαστικά αυτά τα δεδομένα
+            enemyShipLives = ships.ToDictionary(ship => ship.Key, ship => ship.Value.shipLength); //Αντίστοιχα και για τα πλοία του αντιπάλου
         }
 
         public class shipInformation
@@ -55,7 +61,7 @@ namespace battleShips
                 {
                     playerPlaceShip(grid, row, col, shipSize, horizontal, shipName);
                     placed = true;
-                    // Debugging: Εκτύπωση της θέσης
+                    
                     Console.WriteLine($"topothetisi {shipName} ston pinaka sti thesi  ({row}, {col}), orizontia: {horizontal}");
                 }
             }
@@ -94,7 +100,7 @@ namespace battleShips
             {
                 for (int col = 0; col < gridSize; col++)
                 {
-                    Console.Write(playerGrid[row, col] == null ? "-" : "X");
+                    Console.Write(enemyGrid[row, col] == null ? "-" : "X");
                 }
                 Console.WriteLine();
             }
@@ -129,12 +135,10 @@ namespace battleShips
                 if (horizontal)
                 {
                     grid[row, col + i] = shipName;
-                  //  playerShipLocations.Add(shipName);
                 }
                 else
                 {
                     grid[row + i, col] = shipName;
-                  //  playerShipLocations.Add(shipName);
                 }
             }
         }
@@ -145,12 +149,10 @@ namespace battleShips
                 if (horizontal)
                 {
                     grid[row, col + i] = shipName;
-                  //  enemyShipLocations.Add(shipName);
                 }
                 else
                 {
                     grid[row + i, col] = shipName;
-                   // enemyShipLocations.Add(shipName);
                 }
             }
         }
@@ -185,5 +187,62 @@ namespace battleShips
                 }
             }
         }
+
+        public void handleShiphit(string position, bool isPlayerAttack)
+        {
+            int row = position[0] - 'A';
+            int col = int.Parse(position.Substring(1)) - 1;
+
+            string[,] grid = isPlayerAttack ? enemyGrid : playerGrid;
+            Dictionary<string, int> targetShipLives = isPlayerAttack ? enemyShipLives : playerShipLives;
+
+            string hitShipName = grid[row, col];
+
+            if (!string.IsNullOrEmpty(hitShipName) && ships.ContainsKey(hitShipName))
+            {
+                switch (hitShipName)
+                {
+                    case "Aircraft Carrier":
+                        shipName = "Αεροπλανοφόρο";
+                        break;
+                    case "Destroyer":
+                        shipName = "Αντιτορπιλικό";
+                        break;
+                    case "Battleship":
+                        shipName = "Πολεμικό";
+                        break;
+                    case "Submarine":
+                        shipName = "Υποβρύχιο";
+                        break;
+                }
+                if (targetShipLives.ContainsKey(hitShipName) && isPlayerAttack)
+                {
+                    targetShipLives[hitShipName]--;
+                    if (targetShipLives[hitShipName] > 0)
+                    {
+                        MessageBox.Show($"Το {shipName} του αντιπάλου κτυπήθηκε, του απομένουν πλεον {targetShipLives[hitShipName]}");
+                    }
+                }
+
+                else if (targetShipLives.ContainsKey(hitShipName) && !isPlayerAttack)
+                {
+                    {
+                        targetShipLives[hitShipName]--;
+                        if (targetShipLives[(hitShipName)] > 0)
+                        {
+                            MessageBox.Show($"Το {shipName} σου έχει κτυπηθεί! Σου απομένουν πλέον {targetShipLives[hitShipName]} ");
+                        }
+                    }
+                }
+                    if (targetShipLives[hitShipName] == 0 && isPlayerAttack)
+                    {
+                        MessageBox.Show($"Το {shipName} του αντιπάλου έχει βυθιστεί!");
+                    }
+                    else if (targetShipLives[hitShipName] == 0 && !isPlayerAttack)
+                    {
+                        MessageBox.Show($"Το {shipName} σου έχει βυθιστεί!");
+                    }
+                }
+            }
+        }
     }
-}

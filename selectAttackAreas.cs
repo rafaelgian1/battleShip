@@ -22,16 +22,8 @@ namespace battleShips
         private HashSet<string> enemyHitPositions = new HashSet<string>();
         private List<string> playerAvailablePositions;
         private List<string> enemyAvailablePositions;
-
-
-        
-
-
         public event Action<Button> PlayerMoveRequested;
-
         private Random random = new Random();
-
-
 
         public selectAttackAreas(string[,] enemyGrid, string[,] playerGrid)
         {
