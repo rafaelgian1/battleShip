@@ -23,6 +23,10 @@ namespace battleShips
         private List<string> playerAvailablePositions;
         private List<string> enemyAvailablePositions;
 
+
+        
+
+
         public event Action<Button> PlayerMoveRequested;
 
         private Random random = new Random();
@@ -53,20 +57,9 @@ namespace battleShips
             {
                 return false;
             }
-            
+
             bool hit = IsShipHit(position);
 
-            clickedButton.Enabled = false;
-            if (hit)
-            {
-                clickedButton.BackColor = Color.Red;
-                clickedButton.Text = "X";
-            }
-            else
-            {
-                clickedButton.BackColor = Color.Green;
-                clickedButton.Text = "-";
-            }
             PlayerMoveRequested?.Invoke(clickedButton);
             Console.WriteLine($"Clicked position: {position}");
 
@@ -86,23 +79,31 @@ namespace battleShips
             {
                 return false;
             }
-            return !string.IsNullOrEmpty(enemyGrid[row, col]);
+            bool hit = !string.IsNullOrEmpty(playerGrid[row,col]);
+            return hit;
         }
 
         public bool IsEnemyShipHit(string position)
         {
+            
+
+
             if (string.IsNullOrEmpty(position) || position.Length < 2)
                 return false;
-
-            int row = position[0] - 'A';
+            int row = position[0] - 'A'; // Μετατρέπει το γράμμα σε αριθμό
             if (!int.TryParse(position.Substring(1), out int col))
                 return false;
 
-            col -= 1; // Μετατροπή σε μηδενική βάση
-            return !string.IsNullOrEmpty(enemyGrid[row, col]); // Έλεγχος αν υπάρχει πλοίο
+            col -= 1;
+            if (row < 0 || row >= enemyGrid.GetLength(0) || col < 0 || col >= playerGrid.GetLength(1))
+            {
+                return false;
+            }
+            bool hit = !string.IsNullOrEmpty(enemyGrid[row, col]);
+            return hit;
+
         }
-
-
+           
         public string getPosition()
         {
             return getRandomAttackPosition();
@@ -122,21 +123,18 @@ namespace battleShips
 
 
 
-        public void addEnemyPosition(string position)
+        public void getEnemyHitPositions(string position)
         {
             enemyHitPositions.Add(position);
-            
+            playerAvailablePositions.Remove(position);
+
         }
-        public void removeEnemyAvailablePosition(string position)
-        {
-           enemyAvailablePositions.Remove(position);
-           
-        }
-        public void addPlayerPosition(string position)
+        public void getPlayerHitPositions(string position)
         {
             playerHitPositions.Add(position);
-            playerAvailablePositions.Remove(position);
+            enemyAvailablePositions.Remove(position);
         }
+
 
         public bool AreAllPlayerShipSunk()
         {

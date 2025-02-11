@@ -83,6 +83,7 @@
             this.RestartButton = new System.Windows.Forms.Button();
             this.enemyTurnTimer = new System.Windows.Forms.Timer(this.components);
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
+            this.playerTimer = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -760,6 +761,10 @@
             this.gameTimer.Interval = 1000;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
+            // playerTimer
+            // 
+            
+            // 
             // NavalBattles
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -890,6 +895,7 @@
         private System.Windows.Forms.Button RestartButton;
         private System.Windows.Forms.Timer enemyTurnTimer;
         private System.Windows.Forms.Timer gameTimer;
+        private System.Windows.Forms.Timer playerTimer;
     }
 }
 

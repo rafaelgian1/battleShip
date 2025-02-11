@@ -15,7 +15,7 @@ namespace battleShips
 {
     public partial class NavalBattles : Form
     {
-        public static int BoardSize = 10; 
+        public static int BoardSize = 10;
         private shipsPlacement ships;
         private selectAttackAreas attackManager;
         private int playerScore = 0;
@@ -26,7 +26,7 @@ namespace battleShips
         private TimeSpan elapsedTime;
         private DateTime gameEndTime; //Για να αποθηκεύεται σε πιο λεπτό τελειώνει το παιχνίδι και να παρουσιάζεται στον χρήστη
         private Label timerLabel = new Label();
-        
+
 
         public NavalBattles()
         {
@@ -44,7 +44,7 @@ namespace battleShips
             ships.renderGrid(playerTableLayoutPanel, ships.playerGrid, revealShips: true);
             ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: false);
 
-            
+
             enemyTurnTimer = new Timer();
             //enemyTurnTimer.Interval = 1000; //Για να γίνεται η κίνηση του αντιπάλου αυτόματα χωρίς να υπάρχει καθυστέρηση του interval
             enemyTurnTimer.Tick += EnemyTurnTimer_Tick;
@@ -59,30 +59,42 @@ namespace battleShips
         {
             PlayerMove(clickedButton);
         }
-        
+
         private void PlayerMove(Button clickedButton)
         {
+            playerTimer.Start();
             playerTries++;
-            string position = clickedButton.Tag.ToString();
-            
-            if (attackManager.IsEnemyShipHit(position)) {
-                    
-                    playerScore++;
-                    playerScoreIndex.Text = $"{playerScore}";
-                    attackManager.addEnemyPosition(position);
-                    attackManager.removeEnemyAvailablePosition(position);
+            string position = clickedButton.Tag?.ToString();
+
+            if (attackManager.IsEnemyShipHit(position))
+            {
+
+                attackManager.getEnemyHitPositions(position);
+                clickedButton.BackColor = Color.Red;
+                clickedButton.Text = "X";
+                playerScore++;
+                playerScoreIndex.Text = $"{playerScore}";
+            }
+            else
+            {
+                clickedButton.BackColor= Color.Green;
+                clickedButton.Text = "-";
             }
 
-            if (attackManager.AreAllEnemyShipsSunk()) {
+            if (attackManager.AreAllEnemyShipsSunk())
+            {
                 var timePlayed = elapsedTime.ToString(@"mm\:ss");
+                
+                playerTimer.Stop();
+                enemyTurnTimer.Stop();
                 gameTimer.Stop();
                 MessageBox.Show($"Συγχαρητήρια! Βύθισες όλα τα πλοία του αντιπάλου σου με συνολικό σκορ {playerScore} - {enemyScore}" +
                    $" Οι συνολικές σου προσπάθεις ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!");
                 
                 //RestartGame();
             }
-                enemyTurnTimer.Start();
-            }
+            enemyTurnTimer.Start();
+        }
 
         private void EnemyMove()
         {
@@ -96,10 +108,14 @@ namespace battleShips
 
                 if (attackManager.IsShipHit(position))
                 {
+                    attackManager.getPlayerHitPositions(position);
+                    
+                    attackedButton.BackgroundImage = null;
                     attackedButton.BackColor = Color.Red;
+                    attackedButton.Text = "X";
                     enemyScore++;
                     enemyScoreIndex.Text = $"{enemyScore}";
-                    attackManager.addPlayerPosition(position);
+                  
                 }
                 else
                 {
@@ -111,10 +127,13 @@ namespace battleShips
             {
 
                 var timePlayed = elapsedTime.ToString(@"mm\:ss");
+                //gameTimer.Stop();
+                enemyTurnTimer.Stop();
+                playerTimer.Stop();
                 gameTimer.Stop();
                 MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} - {playerScore} πόντους" +
                     $"Οι συνολικές σου προσπάθειες ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!");
-                
+                //RestartGame();
             }
         }
 
@@ -125,9 +144,9 @@ namespace battleShips
             int row = position[0] - 'A';
             if (!int.TryParse(position.Substring(1), out int col)) return null;
 
-            col -= 1; 
+            col -= 1;
 
-            
+
             foreach (Control control in playerTableLayoutPanel.Controls)
             {
                 if (control is Button button && button.Tag?.ToString() == position)
@@ -143,7 +162,8 @@ namespace battleShips
         {
             RestartGame();
         }
-        private void RestartGame() {
+        private void RestartGame()
+        {
             playerScore = 0;
             enemyScore = 0;
             playerScoreIndex.Text = "0";
