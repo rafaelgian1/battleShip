@@ -10,11 +10,11 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Security.Cryptography;
 using System.Drawing.Text;
-
+using Microsoft.VisualBasic;
 namespace battleShips
 {
     public partial class NavalBattles : Form
-    {
+    {   
         public static int BoardSize = 10;
         private shipsPlacement ships;
         private selectAttackAreas attackManager;
@@ -22,28 +22,44 @@ namespace battleShips
         private int enemyScore = 0;
         private int playerTries = 0;
         private int enemyTries = 0;
+        private int playerTotalWins = 0;
+        private int enemyTotalWins = 0;
         private DateTime gameStartTime;
         private TimeSpan elapsedTime;
         private Label timerLabel = new Label();
-
+        private string username;
         private bool isEnemyTurnInProgress = false;
-
+        public dataBaseManager dbManager;
+        
 
         public NavalBattles()
         {
-
+            dbManager = new dataBaseManager("battleShipDataBase.sqlite");
+            getPlayerUsername(); 
             InitializeComponent();
             ships = new shipsPlacement(BoardSize);
             attackManager = ships.attackManager;
             attackManager.PlayerMoveRequested += PlayerMove;
             InitializeGame();
         }
+        private void getPlayerUsername()
+        {
+            username = Interaction.InputBox("Δώστε το όνομά σας:", //χρησιμοποιήση του interaction.inputbox 
+               "Όνομα Χρήστη",
+           "");
 
+            while(string.IsNullOrWhiteSpace(username))
+            {
+                MessageBox.Show("Δεν έχει δοθεί όνομα! Ξανά δώσε");
+                getPlayerUsername();
+                
+            }
+        }
         private void InitializeGame()
         {
             ships.createGrid();
             ships.renderGrid(playerTableLayoutPanel, ships.playerGrid, revealShips: true);
-            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: false);
+            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: true);
 
 
             enemyTurnTimer = new Timer();
@@ -91,8 +107,11 @@ namespace battleShips
                 playerTimer.Stop();
                 enemyTurnTimer.Stop();
                 gameTimer.Stop();
-                var restartOption = MessageBox.Show($"Συγχαρητήρια! Βύθισες όλα τα πλοία του αντιπάλου σου με συνολικό σκορ {playerScore} - {enemyScore}" +
-                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!\n",
+                playerTotalWins++;
+                var result = "Νίκη";
+                dbManager.setupDatabaseAndInsertData(username, result, timePlayed);
+                var restartOption = MessageBox.Show($"Συγχαρητήρια! Βύθισες όλα τα πλοία του αντιπάλου σου με συνολικό σκορ {playerScore} - {enemyScore}." +
+                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!\nΣυνολικές νίκες: {playerTotalWins} και συνολικές ήττες: {enemyTotalWins}.",
                    $"Θέλεις να ξεκινήσεις νέο παιχνίδι ή να τερματιστεί;",
                     MessageBoxButtons.YesNo
                     );
@@ -149,8 +168,11 @@ namespace battleShips
                 enemyTurnTimer.Stop();
                 playerTimer.Stop();
                 gameTimer.Stop();
-                var restartOption = MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} - {playerScore} πόντους" +
-                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!\n",
+                enemyTotalWins++;
+                var result = "Ήττα";
+                dbManager.setupDatabaseAndInsertData(username, result, timePlayed);
+                var restartOption = MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} - {playerScore} πόντους. " +
+                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!\nΣυνολικές νίκες: {playerTotalWins} και συνολικές ήττες: {enemyTotalWins}.",
                     $"Θέλεις να ξεκινήσεις νέο παιχνίδι ή να τερματιστεί;",
                     MessageBoxButtons.YesNo
                     );
