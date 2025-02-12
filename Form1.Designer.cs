@@ -84,6 +84,8 @@
             this.enemyTurnTimer = new System.Windows.Forms.Timer(this.components);
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
             this.playerTimer = new System.Windows.Forms.Timer(this.components);
+            this.playerShipHitLabel = new System.Windows.Forms.Label();
+            this.enemyShipHitLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -121,7 +123,7 @@
             this.playerScore2.BackColor = System.Drawing.Color.Transparent;
             this.playerScore2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.playerScore2.ForeColor = System.Drawing.Color.Red;
-            this.playerScore2.Location = new System.Drawing.Point(1836, 87);
+            this.playerScore2.Location = new System.Drawing.Point(638, 1391);
             this.playerScore2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.playerScore2.Name = "playerScore2";
             this.playerScore2.Size = new System.Drawing.Size(338, 55);
@@ -134,7 +136,7 @@
             this.enemyScoreIndex.BackColor = System.Drawing.Color.Transparent;
             this.enemyScoreIndex.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.enemyScoreIndex.ForeColor = System.Drawing.Color.Red;
-            this.enemyScoreIndex.Location = new System.Drawing.Point(2182, 87);
+            this.enemyScoreIndex.Location = new System.Drawing.Point(984, 1391);
             this.enemyScoreIndex.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.enemyScoreIndex.Name = "enemyScoreIndex";
             this.enemyScoreIndex.Size = new System.Drawing.Size(80, 55);
@@ -761,9 +763,27 @@
             this.gameTimer.Interval = 1000;
             this.gameTimer.Tick += new System.EventHandler(this.gameTimer_Tick);
             // 
-            // playerTimer
+            // playerShipHitLabel
             // 
-            
+            this.playerShipHitLabel.AutoSize = true;
+            this.playerShipHitLabel.BackColor = System.Drawing.Color.Transparent;
+            this.playerShipHitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.playerShipHitLabel.ForeColor = System.Drawing.Color.Black;
+            this.playerShipHitLabel.Location = new System.Drawing.Point(641, 92);
+            this.playerShipHitLabel.Name = "playerShipHitLabel";
+            this.playerShipHitLabel.Size = new System.Drawing.Size(0, 42);
+            this.playerShipHitLabel.TabIndex = 13;
+            // 
+            // enemyShipHitLabel
+            // 
+            this.enemyShipHitLabel.AutoSize = true;
+            this.enemyShipHitLabel.BackColor = System.Drawing.Color.Transparent;
+            this.enemyShipHitLabel.Font = new System.Drawing.Font("Arial", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.enemyShipHitLabel.ForeColor = System.Drawing.Color.Black;
+            this.enemyShipHitLabel.Location = new System.Drawing.Point(1314, 96);
+            this.enemyShipHitLabel.Name = "enemyShipHitLabel";
+            this.enemyShipHitLabel.Size = new System.Drawing.Size(0, 42);
+            this.enemyShipHitLabel.TabIndex = 14;
             // 
             // NavalBattles
             // 
@@ -773,6 +793,9 @@
             this.BackgroundImage = global::battleShips.Properties.Resources.work_blockchain_game_on_echo_smart_contracts_1920_6;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(2635, 1581);
+            this.Controls.Add(this.playerScore2);
+            this.Controls.Add(this.enemyShipHitLabel);
+            this.Controls.Add(this.playerShipHitLabel);
             this.Controls.Add(this.RestartButton);
             this.Controls.Add(this.ΝΑΥΜΑΧΙΑ);
             this.Controls.Add(this.label22);
@@ -819,7 +842,6 @@
             this.Controls.Add(this.column1);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.playerScore2);
             this.Controls.Add(this.playerScore1);
             this.Controls.Add(this.enemyScoreIndex);
             this.Controls.Add(this.playerScoreIndex);
@@ -896,6 +918,8 @@
         private System.Windows.Forms.Timer enemyTurnTimer;
         private System.Windows.Forms.Timer gameTimer;
         private System.Windows.Forms.Timer playerTimer;
+        private System.Windows.Forms.Label playerShipHitLabel;
+        private System.Windows.Forms.Label enemyShipHitLabel;
     }
 }
 

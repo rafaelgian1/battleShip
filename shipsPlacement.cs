@@ -188,7 +188,7 @@ namespace battleShips
             }
         }
 
-        public void handleShiphit(string position, bool isPlayerAttack)
+        public void handleShiphit(string position, bool isPlayerAttack, Label playerShipHitLabel, Label enemyShipHitLabel)
         {
             int row = position[0] - 'A';
             int col = int.Parse(position.Substring(1)) - 1;
@@ -220,7 +220,7 @@ namespace battleShips
                     targetShipLives[hitShipName]--;
                     if (targetShipLives[hitShipName] > 0)
                     {
-                        MessageBox.Show($"Το {shipName} του αντιπάλου κτυπήθηκε, του απομένουν πλεον {targetShipLives[hitShipName]}");
+                        enemyShipHitLabel.Text = ($"Το {shipName} του αντιπάλου κτυπήθηκε,\n του απομένουν πλεον {targetShipLives[hitShipName]}");
                     }
                 }
 
@@ -230,17 +230,19 @@ namespace battleShips
                         targetShipLives[hitShipName]--;
                         if (targetShipLives[(hitShipName)] > 0)
                         {
-                            MessageBox.Show($"Το {shipName} σου έχει κτυπηθεί! Σου απομένουν πλέον {targetShipLives[hitShipName]} ");
+                            playerShipHitLabel.Text = ($"Το {shipName} σου κτυπήθηκε!\n Σου απομένουν πλέον {targetShipLives[hitShipName]}");
                         }
                     }
                 }
                     if (targetShipLives[hitShipName] == 0 && isPlayerAttack)
                     {
                         MessageBox.Show($"Το {shipName} του αντιπάλου έχει βυθιστεί!");
+                        enemyShipHitLabel.Text = "";
                     }
                     else if (targetShipLives[hitShipName] == 0 && !isPlayerAttack)
                     {
                         MessageBox.Show($"Το {shipName} σου έχει βυθιστεί!");
+                        playerShipHitLabel.Text = "";
                     }
                 }
             }

@@ -76,7 +76,7 @@ namespace battleShips
                 playerScore++;
                 playerScoreIndex.Text = $"{playerScore}";
 
-                ships.handleShiphit(position, true);
+                ships.handleShiphit(position, true, playerShipHitLabel, enemyShipHitLabel);
             }
             else
             {
@@ -92,10 +92,9 @@ namespace battleShips
                 enemyTurnTimer.Stop();
                 gameTimer.Stop();
                 var restartOption = MessageBox.Show($"Συγχαρητήρια! Βύθισες όλα τα πλοία του αντιπάλου σου με συνολικό σκορ {playerScore} - {enemyScore}" +
-                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!",
-                    "Θέλεις να ξεκινήσεις νέο παιχνίδι ή να τερματιστεί;",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
+                   $" Οι συνολικές σου προσπάθεις ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!\n",
+                   $"Θέλεις να ξεκινήσεις νέο παιχνίδι ή να τερματιστεί;",
+                    MessageBoxButtons.YesNo
                     );
 
                 if (restartOption == DialogResult.Yes)
@@ -118,6 +117,7 @@ namespace battleShips
             enemyTries++;
             string position = attackManager.getPosition();
             Button attackedButton = GetButtonFromPosition(position);
+            
 
             Console.WriteLine("o antipalos epelexe " + position);//για να βλεπουμε στο debugging την επιλογή του υπολογιστή
             if (position != null)
@@ -125,6 +125,7 @@ namespace battleShips
 
                 if (attackManager.IsShipHit(position))
                 {
+
                     attackManager.getPlayerHitPositions(position);
                     
                     attackedButton.BackgroundImage = null;
@@ -132,7 +133,7 @@ namespace battleShips
                     attackedButton.Text = "X";
                     enemyScore++;
                     enemyScoreIndex.Text = $"{enemyScore}";
-                    ships.handleShiphit(position, false);
+                    ships.handleShiphit(position, false, playerShipHitLabel,enemyShipHitLabel);
                 }
                 else
                 {
@@ -149,10 +150,9 @@ namespace battleShips
                 playerTimer.Stop();
                 gameTimer.Stop();
                 var restartOption = MessageBox.Show($"Δυστυχώς έχασες! Ο αντίπαλος έχει κερδίσει με συνολικό σκορ {enemyScore} - {playerScore} πόντους" +
-                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!",
-                    "Θέλεις να ξεκινήσεις νέο παιχνίδι ή να τερματιστεί;",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
+                    $"Οι συνολικές σου προσπάθειες ήταν {playerTries} σε συνολικό χρόνο {timePlayed}!\n",
+                    $"Θέλεις να ξεκινήσεις νέο παιχνίδι ή να τερματιστεί;",
+                    MessageBoxButtons.YesNo
                     );
 
                 if(restartOption == DialogResult.Yes)
@@ -197,6 +197,8 @@ namespace battleShips
         }
         private void RestartGame()
         {
+            playerShipHitLabel.Text = "";
+            enemyShipHitLabel.Text = "";
             playerScore = 0;
             enemyScore = 0;
             playerTries = 0;
