@@ -59,11 +59,10 @@ namespace battleShips
         {
             ships.createGrid();
             ships.renderGrid(playerTableLayoutPanel, ships.playerGrid, revealShips: true);
-            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: true);
+            ships.renderGrid(enemyTableLayoutPanel, ships.enemyGrid, revealShips: false);
 
 
             enemyTurnTimer = new Timer();
-            //enemyTurnTimer.Interval = 1000; //Για να γίνεται η κίνηση του αντιπάλου αυτόματα χωρίς να υπάρχει καθυστέρηση του interval
             enemyTurnTimer.Tick += EnemyTurnTimer_Tick;
         }
 
@@ -164,7 +163,6 @@ namespace battleShips
             {
 
                 var timePlayed = elapsedTime.ToString(@"mm\:ss");
-                //gameTimer.Stop();
                 enemyTurnTimer.Stop();
                 playerTimer.Stop();
                 gameTimer.Stop();
